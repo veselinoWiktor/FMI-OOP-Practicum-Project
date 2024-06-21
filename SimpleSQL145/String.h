@@ -27,6 +27,8 @@ public:
 	size_t getLength() const;
 	const char* c_str() const;
 
+	String substr(size_t begin, size_t length) const;
+
 	String& operator+=(const String& other);
 
 	char& operator[](size_t idx);
