@@ -1,7 +1,7 @@
 #include <iostream>
 #define CIN_MESSAGE "ss145> "
 
-#include "DatabaseLibrary/DatabaseLibrary.h"
+#include "DatabaseLibrary.h"
 
 int main()
 {

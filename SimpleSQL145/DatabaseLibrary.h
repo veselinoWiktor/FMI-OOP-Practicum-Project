@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../Utils/String.h"
-#include "Models/Table.h"
+#include "String.h"
+#include "Table.h"
+#include "SQLResponse.h"
 
 class Database
 {
@@ -12,6 +13,6 @@ private:
 
 public:
 	Database(const String& pathToDB);
-	void showTables();
+	SQLResponse executeQuery(const String& query);
 };
 
