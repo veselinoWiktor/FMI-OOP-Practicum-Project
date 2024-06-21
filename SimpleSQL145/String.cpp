@@ -121,6 +121,18 @@ const char* String::c_str() const
 	return data;
 }
 
+String String::substr(size_t begin, size_t length) const
+{
+	if (begin + length > getLength())
+	{
+		throw std::length_error("String::substr(); Exceeded string length");
+	}
+
+	String res(length + 1);
+	strncat(res.data, data + begin, length);
+	return res;
+}
+
 String& String::operator+=(const String& other)
 {
 	size_t newLength = length + other.length;
