@@ -363,3 +363,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/SimpleSQL145/SimpleSQL145.vcxproj
+/SimpleSQL145/SimpleSQL145.vcxproj.filters
