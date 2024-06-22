@@ -129,6 +129,7 @@ String String::substr(size_t begin, size_t length) const
 	}
 
 	String res(length + 1);
+	res.length = length;
 	strncat(res.data, data + begin, length);
 	return res;
 }
