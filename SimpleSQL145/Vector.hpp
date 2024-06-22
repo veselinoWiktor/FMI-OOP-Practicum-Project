@@ -36,6 +36,7 @@ public:
 	T popBack();
 	T popAt(size_t index);
 
+	bool contains(const T& element);
 	bool empty() const;
 	void clear();
 	void shrinkToFit();
@@ -199,6 +200,20 @@ T Vector<T>::popAt(size_t index) {
 	}
 
 	return temp;
+}
+
+template<typename T>
+bool Vector<T>::contains(const T& element)
+{
+	for (size_t i = 0; i < size; i++)
+	{
+		if (data[i] == element)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 template<typename T>
