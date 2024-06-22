@@ -10,6 +10,10 @@ SQLCommandType SQLCommandFactory::getCommandType(const String& command)
 	{
 		return SQLCommandType::DropTable;
 	}
+	else if (command == "alter")
+	{
+		return SQLCommandType::AlterTable;
+	}
 	else if (command == "insert")
 	{
 		return SQLCommandType::Insert;
@@ -62,15 +66,75 @@ SQLCommand* SQLCommandFactory::handleDropTableCommand(Vector<Table>& tables, con
 	return new DropTableCommand(tables, tblName);
 }
 
-SQLCommand* SQLCommandFactory::handleInsertCommand(Vector<Table>& tables, const String& query, std::stringstream& ssQuery)
+SQLCommand* SQLCommandFactory::handleAlterTableCommand(Vector<Table>& tables, std::stringstream& ssQuery)
+{
+	SSUtils::clearWhiteSpaces(ssQuery);
+	char buff[1024];
+	ssQuery.getline(buff, 1024, ' '); // skips "table"
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // gets table name;
+	String tblName(buff);
+	Table& tbl = TableUtils::findTable(tables, tblName);
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' ');
+	String operation(buff);
+
+	if (operation == "add")
+	{
+		Column newColumn;
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' ');
+		newColumn.name = buff;
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' ');
+		newColumn.type = parseColumnType(buff);
+
+		return new AlterAddCommand(tbl, newColumn);
+	}
+	else if (operation == "rename")
+	{
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // skips "column"
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // gets column name
+		String columnName(buff);
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // skips "to"
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // gets new column name
+		String newColumnName(buff);
+
+		return new AlterRenameCommand(tbl, columnName, newColumnName);
+	}
+	else
+	{
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // skips "column"
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // gets column name
+		String columnName(buff);
+
+		return new AlterDropCommand(tbl, columnName);
+	}
+}
+
+SQLCommand* SQLCommandFactory::handleInsertCommand(Vector<Table>& tables, std::stringstream& ssQuery)
 {
 	SSUtils::clearWhiteSpaces(ssQuery);
 	char buff[1024];
 	ssQuery.getline(buff, 1024, ' '); //skips "into"
 
 	SSUtils::clearWhiteSpaces(ssQuery);
-	ssQuery.getline(buff, 1024, ' ');
-	String tblName(buff); // gets table name;
+	ssQuery.getline(buff, 1024, ' '); //gets table name;
+	String tblName(buff); 
 	Table& tbl = TableUtils::findTable(tables, tblName);
 
 	SSUtils::clearWhiteSpaces(ssQuery);
@@ -153,11 +217,12 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 		return handleDropTableCommand(tables, query);
 		break;
 	case SQLCommandType::AlterTable:
+		return handleAlterTableCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::ShowTables:
 		break;
 	case SQLCommandType::Insert:
-		return handleInsertCommand(tables, query, ssQuery);
+		return handleInsertCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::Update:
 		break;
