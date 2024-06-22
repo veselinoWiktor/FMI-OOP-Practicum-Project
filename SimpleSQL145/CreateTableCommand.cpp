@@ -13,6 +13,8 @@ SQLResponse CreateTableCommand::execute()
 		newTable.insertColumn(columns[i]);
 	}
 
+	tables.pushBack(newTable);
+
 	return SQLResponse();
 	//TODO add SQLResponse
 }
