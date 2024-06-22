@@ -15,8 +15,8 @@ class SQLCommandFactory
 {
 	SQLCommandType getCommandType(const String& command);
 
-	SQLCommand* handleCreateTableCommand(Vector<Table>& tables, const String& query);
-	SQLCommand* handleDropTableCommand(Vector<Table>& tables, const String& query);
+	SQLCommand* handleCreateTableCommand(Vector<Table>& tables, std::stringstream& ssQuery);
+	SQLCommand* handleDropTableCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 
 	SQLCommand* handleAlterTableCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleInsertCommand(Vector<Table>& tables, std::stringstream& ssQuery);

@@ -22,46 +22,52 @@ SQLCommandType SQLCommandFactory::getCommandType(const String& command)
 	return SQLCommandType::Select;
 }
 
-SQLCommand* SQLCommandFactory::handleCreateTableCommand(Vector<Table>& tables, const String& query)
+
+SQLCommand* SQLCommandFactory::handleCreateTableCommand(Vector<Table>& tables, std::stringstream& ssQuery)
 {
-	int tblNameLen = 0;
-	StringView sv(query.c_str() + 13, query.c_str() + query.getLength());
-	for (size_t i = 0; i < sv.length(); i++)
-	{
-		if (sv[i] != ' ')
-		{
-			tblNameLen++;
-		}
-		else
-		{
-			break;
-		}
-	}
-
-	String tblName = query.substr(13, tblNameLen);
-	String columnData = query.substr(13 + tblNameLen + 2, query.getLength() - 1 - (13 + tblNameLen + 2));
-	std::stringstream ss(columnData.c_str());
-
+	//create table table1.ss145 (field1 int, field2 text, field3 real);
+	SSUtils::clearWhiteSpaces(ssQuery);
 	char buff[1024];
+	ssQuery.getline(buff, 1024, ' '); // skips "table"
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // gets table name;
+	String tblName(buff);
+
+	ssQuery.getline(buff, 1024, '('); // clears everything before and including "("
+	ssQuery.getline(buff, 1024, ')'); // gets columns data in brackets
+	String columnData(buff);
+
+	ssQuery.clear();
+	ssQuery.str(columnData.c_str());
 	Vector<Column> columns;
-	while (!ss.eof())
+	while (!ssQuery.eof())
 	{
 		Column curr;
-		ss.getline(buff, 1024, ' ');
-		curr.name = buff;
-		ss.getline(buff, 1024, ',');
-		curr.type = parseColumnType(buff);
-		columns.pushBack(curr);
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' ');
+		curr.name = buff; // gets column name
 
-		ss.ignore();
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ','); // gets column type
+		curr.type = parseColumnType(buff);
+
+		columns.pushBack(curr);
 	}
 
 	return new CreateTableCommand(tables, columns, tblName);
 }
 
-SQLCommand* SQLCommandFactory::handleDropTableCommand(Vector<Table>& tables, const String& query)
+SQLCommand* SQLCommandFactory::handleDropTableCommand(Vector<Table>& tables, std::stringstream& ssQuery)
 {
-	String tblName = query.substr(11, query.getLength() - 11);
+	SSUtils::clearWhiteSpaces(ssQuery);
+	char buff[1024];
+	ssQuery.getline(buff, 1024, ' '); // skips "table"
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // gets table name;
+	String tblName(buff);
+	Table& tbl = TableUtils::findTable(tables, tblName);
 
 	return new DropTableCommand(tables, tblName);
 }
@@ -211,10 +217,10 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 	switch (commandType)
 	{
 	case SQLCommandType::CreateTable:
-		return handleCreateTableCommand(tables, query);
+		return handleCreateTableCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::DropTable:
-		return handleDropTableCommand(tables, query);
+		return handleDropTableCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::AlterTable:
 		return handleAlterTableCommand(tables, ssQuery);
