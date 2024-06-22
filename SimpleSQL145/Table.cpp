@@ -52,6 +52,11 @@ size_t Table::getColumnsCount() const
 	return columns.getSize();
 }
 
+const Vector<Column>& Table::getColumns() const
+{
+	return columns;
+}
+
 void Table::insertRow(const Row& row)
 {
 	rows.pushBack(row);

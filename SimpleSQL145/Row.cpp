@@ -21,3 +21,13 @@ size_t Row::getCellsCount() const
 {
 	return fields.getSize();
 }
+
+void Row::addField(const String& field)
+{
+	fields.pushBack(Field{field});
+}
+
+void Row::addField(String&& field)
+{
+	fields.pushBack(Field{ std::move(field) });
+}

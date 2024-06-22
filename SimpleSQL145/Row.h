@@ -21,6 +21,9 @@ private:
 public:
 	size_t getCellsCount() const;
 
+	void addField(const String& field);
+	void addField(String&& field);
+
 	//friend std::ofstream& operator<<(std::ofstream& ofs, const Row& row);
 	friend std::ifstream& operator>>(std::ifstream& ifs, Row& row);
 };

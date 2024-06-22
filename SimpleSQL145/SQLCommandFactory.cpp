@@ -1,19 +1,7 @@
 #include "SQLCommandFactory.h"
 
-SQLCommandType SQLCommandFactory::getCommandType(const StringView& query)
+SQLCommandType SQLCommandFactory::getCommandType(const String& command)
 {
-	int count = 0;
-	//can be more complex to get first word of the query
-	for (size_t i = 0; i < query.length(); i++)
-	{
-		if (query[i] != ' ')
-			count++;
-		else
-			break;
-	}
-
-	StringView command = query.substr(0, count);
-
 	if (command == "create")
 	{
 		return SQLCommandType::CreateTable;
@@ -22,6 +10,12 @@ SQLCommandType SQLCommandFactory::getCommandType(const StringView& query)
 	{
 		return SQLCommandType::DropTable;
 	}
+	else if (command == "insert")
+	{
+		return SQLCommandType::Insert;
+	}
+
+	return SQLCommandType::Select;
 }
 
 SQLCommand* SQLCommandFactory::handleCreateTableCommand(Vector<Table>& tables, const String& query)
@@ -68,9 +62,86 @@ SQLCommand* SQLCommandFactory::handleDropTableCommand(Vector<Table>& tables, con
 	return new DropTableCommand(tables, tblName);
 }
 
+SQLCommand* SQLCommandFactory::handleInsertCommand(Vector<Table>& tables, const String& query, std::stringstream& ssQuery)
+{
+	SSUtils::clearWhiteSpaces(ssQuery);
+	char buff[1024];
+	ssQuery.getline(buff, 1024, ' '); //skips "into"
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' ');
+	String tblName(buff); // gets table name;
+	Table& tbl = TableUtils::findTable(tables, tblName);
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.get(); //gets '('
+
+	ssQuery.getline(buff, 1024, ')'); //gets selected columns for insertion
+	String columnsData(buff);
+	
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // skips "values"
+	SSUtils::clearWhiteSpaces(ssQuery);
+
+	ssQuery.getline(buff, 1024); //gets values for insertion
+	String rowsData(buff);
+
+	Vector<String> columnNames;
+	ssQuery.clear();
+	ssQuery.str(columnsData.c_str());
+	while (!ssQuery.eof())
+	{
+		ssQuery.getline(buff, 1024, ',');
+		SSUtils::clearWhiteSpaces(ssQuery);
+		columnNames.pushBack(buff);
+	}
+
+	Vector<String> records; // used to store record (..., ..., ...) <- one of this
+	ssQuery.clear();
+	ssQuery.str(rowsData.c_str());
+	while (!ssQuery.eof())
+	{
+		ssQuery.get(); // Skips "("
+		ssQuery.getline(buff, 1024, ')');
+		records.pushBack(buff);
+		ssQuery.get(); // Skips ","
+		SSUtils::clearWhiteSpaces(ssQuery);
+	}
+
+	Vector<Column> tblColumns = tbl.getColumns();
+	Vector<Row> rows; //makes the final rows;
+	for (size_t i = 0; i < records.getSize(); i++)
+	{
+		Row currRow;
+		ssQuery.clear();
+		ssQuery.str(records[i].c_str());
+		
+		for (size_t i = 0; i < tblColumns.getSize(); i++)
+		{
+			if (columnNames.contains(tblColumns[i].name))
+			{
+				ssQuery.getline(buff, 1024, ',');
+				currRow.addField(buff);
+				SSUtils::clearWhiteSpaces(ssQuery);
+			}
+			else
+			{
+				currRow.addField("NULL");
+			}
+		}
+		rows.pushBack(currRow);
+	}
+	
+	return new InsertCommand(tbl, rows);
+}
+
 SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String& query)
 {
-	SQLCommandType commandType = getCommandType(query);
+	std::stringstream ssQuery(query.c_str());
+	SSUtils::clearWhiteSpaces(ssQuery);
+	char command[1024];
+	ssQuery.getline(command, 1024, ' ');
+	SQLCommandType commandType = getCommandType(command);
 
 	
 	switch (commandType)
@@ -86,6 +157,7 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 	case SQLCommandType::ShowTables:
 		break;
 	case SQLCommandType::Insert:
+		return handleInsertCommand(tables, query, ssQuery);
 		break;
 	case SQLCommandType::Update:
 		break;

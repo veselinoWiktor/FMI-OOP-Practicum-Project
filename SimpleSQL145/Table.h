@@ -23,6 +23,7 @@ public:
 	
 	const String& getName() const;
 	size_t getColumnsCount() const;
+	const Vector<Column>& getColumns() const;
 
 	void insertRow(const Row& row);
 	void insertRow(Row&& row);
