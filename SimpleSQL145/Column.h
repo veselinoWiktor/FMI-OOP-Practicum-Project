@@ -8,6 +8,22 @@ enum class ColumnType
 	Text
 };
 
+static ColumnType parseColumnType(const String& str)
+{
+	if (str == "int")
+	{
+		return ColumnType::Integer;
+	}
+	else if (str == "real")
+	{
+		return ColumnType::Real;
+	}
+	else 
+	{
+		return ColumnType::Text;
+	}
+}
+
 struct Column
 {
 	String name = "";
