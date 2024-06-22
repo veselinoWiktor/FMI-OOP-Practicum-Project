@@ -16,6 +16,14 @@ char StringView::operator[](size_t index) const
 	return _begin[index];
 }
 
+void StringView::trim()
+{
+	while (*_begin == ' ')
+	{
+		_begin++;
+	}
+}
+
 StringView StringView::substr(size_t from, size_t length) const
 {
 	if (_begin + from + length > _end)

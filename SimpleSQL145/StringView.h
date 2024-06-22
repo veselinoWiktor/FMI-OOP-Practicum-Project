@@ -15,6 +15,8 @@ public:
 	size_t length() const;
 	char operator[](size_t ind) const;
 
+	void trim(); //trims empty spaces on the front
+
 	StringView substr(size_t from, size_t length) const;
 	friend std::ostream& operator<<(std::ostream&, const StringView& strView);
 };
