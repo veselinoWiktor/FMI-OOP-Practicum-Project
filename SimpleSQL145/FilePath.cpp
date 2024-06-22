@@ -1,7 +1,7 @@
 #include "FilePath.h"
 #include <sstream>
 
-FilePath::FilePath(const char* fileName) : FilePath(fileName)
+FilePath::FilePath(const char* fileName) : FilePath((String)fileName)
 {
 }
 
