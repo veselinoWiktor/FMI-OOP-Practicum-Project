@@ -30,6 +30,7 @@ public:
 	String substr(size_t begin, size_t length) const;
 
 	String& operator+=(const String& other);
+	String& operator+=(char ch);
 
 	char& operator[](size_t idx);
 	const char& operator[](size_t idx) const;

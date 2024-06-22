@@ -148,6 +148,19 @@ String& String::operator+=(const String& other)
 	return *this;
 }
 
+String& String::operator+=(char ch)
+{
+	length++;
+
+	if (length > capacity)
+	{
+		resize(nextPowerOfTwo(length));
+	}
+
+	strcat(data, (const char*)ch);
+	return *this;
+}
+
 char& String::operator[](size_t idx)
 {
 	if (idx >= length)
