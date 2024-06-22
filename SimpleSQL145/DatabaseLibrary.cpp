@@ -31,5 +31,7 @@ Database::Database(const FilePath& relativePath)
 
 SQLResponse Database::executeQuery(const String& query)
 {
-	SQLCommand* command = 
+	static SQLCommandFactory factory;
+	SQLCommand* command = factory.createCommand(tables, query);
+	return command->execute();
 }
