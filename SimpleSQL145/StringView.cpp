@@ -35,3 +35,26 @@ std::ostream& operator<<(std::ostream& os, const StringView& strView)
 	}
 	return os;
 }
+
+bool operator==(const StringView& lhs, const StringView& rhs)
+{
+	if (lhs.length() != rhs.length())
+	{
+		return false;
+	}
+
+	for (size_t i = 0; i < lhs.length(); i++)
+	{
+		if (lhs[i] != rhs[i])
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool operator!=(const StringView& lhs, const StringView& rhs)
+{
+	return !(lhs == rhs);
+}

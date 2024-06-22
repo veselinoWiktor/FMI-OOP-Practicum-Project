@@ -19,4 +19,6 @@ public:
 	friend std::ostream& operator<<(std::ostream&, const StringView& strView);
 };
 
+bool operator==(const StringView& lhs, const StringView& rhs);
+bool operator!=(const StringView& lhs, const StringView& rhs);
 //TODO: implement comparison operators 
