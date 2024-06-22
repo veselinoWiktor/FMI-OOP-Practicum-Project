@@ -57,6 +57,16 @@ const Vector<Column>& Table::getColumns() const
 	return columns;
 }
 
+size_t Table::getRowsCount() const
+{
+	return rows.getSize();
+}
+
+const Vector<Row>& Table::getRows() const
+{
+	return rows;
+}
+
 void Table::insertRow(const Row& row)
 {
 	rows.pushBack(row);
@@ -70,9 +80,49 @@ void Table::insertRow(Row&& row)
 void Table::insertColumn(const Column& column)
 {
 	columns.pushBack(column);
+	for (size_t i = 0; i < rows.getSize(); i++)
+	{
+		rows[i].addField("NULL");
+	}
 }
 
 void Table::insertColumn(Column&& column)
 {
 	columns.pushBack(std::move(column));
+	for (size_t i = 0; i < rows.getSize(); i++)
+	{
+		rows[i].addField("NULL");
+	}
+}
+
+void Table::removeColumnAt(size_t colIdx)
+{
+	columns.popAt(colIdx);
+}
+
+void Table::removeColumnByName(const String& columnName)
+{
+	for (size_t i = 0; i < columns.getSize(); i++)
+	{
+		if (columns[i].name == columnName)
+		{
+			return removeColumnAt(i);
+		}
+	}
+
+	throw std::invalid_argument(("Column \"" + columnName + "\" was not found").c_str());
+}
+
+void Table::renameColumn(const String& columnName, const String& columnNewName)
+{
+	for (size_t i = 0; i < columns.getSize(); i++)
+	{
+		if (columns[i].name == columnName)
+		{
+			columns[i].name = columnNewName;
+			return;
+		}
+	}
+
+	throw std::invalid_argument(("Column \"" + columnName + "\" was not found").c_str());
 }

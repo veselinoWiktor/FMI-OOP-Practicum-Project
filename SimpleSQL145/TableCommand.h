@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SQLCommand.h"
+#include "Table.h"
 #include "Vector.hpp"
 
 class TableCommand : public SQLCommand

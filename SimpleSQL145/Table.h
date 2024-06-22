@@ -22,12 +22,24 @@ public:
 	Table(const FilePath& path);
 	
 	const String& getName() const;
+
 	size_t getColumnsCount() const;
 	const Vector<Column>& getColumns() const;
 
+	size_t getRowsCount() const;
+	const Vector<Row>& getRows() const;
+
 	void insertRow(const Row& row);
 	void insertRow(Row&& row);
+
 	void insertColumn(const Column& column);
 	void insertColumn(Column&& column);
+
+	void removeColumnAt(size_t colIdx);
+	void removeColumnByName(const String& columnName);
+
+	void renameColumn(const String& columnName, const String& columnNewName);
+	
+	//void removeColumn(size_t columnIdx);
 };
 
