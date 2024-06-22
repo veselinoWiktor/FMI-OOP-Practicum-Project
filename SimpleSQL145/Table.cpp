@@ -77,6 +77,11 @@ void Table::insertRow(Row&& row)
 	rows.pushBack(std::move(row));
 }
 
+void Table::removeRowAt(size_t idx)
+{
+	rows.popAt(idx);
+}
+
 void Table::insertColumn(const Column& column)
 {
 	columns.pushBack(column);

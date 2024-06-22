@@ -32,6 +32,8 @@ public:
 	void insertRow(const Row& row);
 	void insertRow(Row&& row);
 
+	void removeRowAt(size_t idx);
+
 	void insertColumn(const Column& column);
 	void insertColumn(Column&& column);
 
