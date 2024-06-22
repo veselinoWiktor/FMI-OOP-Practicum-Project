@@ -22,6 +22,10 @@ void Table::loadTable(std::ifstream& ifs)
 	}
 }
 
+Table::Table(const String& tableName) : name(tableName)
+{
+}
+
 Table::Table(const FilePath& path)
 {
 	if (path.getExtension() != ".ss145")
@@ -37,4 +41,14 @@ Table::Table(const FilePath& path)
 		//TODO: throw exception
 	}
 	loadTable(ifs);
+}
+
+void Table::insertColumn(const Column& column)
+{
+	columns.pushBack(column);
+}
+
+void Table::insertColumn(Column&& column)
+{
+	columns.pushBack(std::move(column));
 }
