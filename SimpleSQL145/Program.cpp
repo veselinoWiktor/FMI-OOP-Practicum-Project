@@ -2,10 +2,13 @@
 #define CIN_MESSAGE "ss145> "
 
 #include "DatabaseLibrary.h"
+#include "FilePath.h"
 
 int main()
 {
-	std::cout << "Enter path to database" << std::endl;
+	Table t((String)"table1.ss145");
+
+	/*std::cout << "Enter path to database" << std::endl;
 	String pathToDB;
 	std::cout << CIN_MESSAGE;
 	std::cin >> pathToDB;
@@ -34,5 +37,5 @@ int main()
 
 		std::cout << CIN_MESSAGE;
 		std::cin >> command;
-	}
+	}*/
 }
