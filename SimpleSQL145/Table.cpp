@@ -43,6 +43,11 @@ Table::Table(const FilePath& path)
 	loadTable(ifs);
 }
 
+const String& Table::getName() const
+{
+	return name;
+}
+
 void Table::insertColumn(const Column& column)
 {
 	columns.pushBack(column);

@@ -21,6 +21,8 @@ public:
 	Table(const String& tableName);
 	Table(const FilePath& path);
 	
+	const String& getName() const;
+
 	/*void insertRow(const Row& row);
 	void insertRow(Row&& row);*/
 	void insertColumn(const Column& column);
