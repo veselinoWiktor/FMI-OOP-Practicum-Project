@@ -19,6 +19,7 @@ private:
 	Vector<Field> fields;
 
 public:
+	size_t getCellsCount() const;
 
 	//friend std::ofstream& operator<<(std::ofstream& ofs, const Row& row);
 	friend std::ifstream& operator>>(std::ifstream& ifs, Row& row);

@@ -16,3 +16,8 @@ std::ifstream& operator>>(std::ifstream& ifs, Row& row)
 
 	return ifs;
 }
+
+size_t Row::getCellsCount() const
+{
+	return fields.getSize();
+}
