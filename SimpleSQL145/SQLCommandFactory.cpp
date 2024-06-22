@@ -18,6 +18,10 @@ SQLCommandType SQLCommandFactory::getCommandType(const StringView& query)
 	{
 		return SQLCommandType::CreateTable;
 	}
+	else if (command == "drop")
+	{
+		return SQLCommandType::DropTable;
+	}
 }
 
 SQLCommand* SQLCommandFactory::handleCreateTableCommand(Vector<Table>& tables, const String& query)
@@ -57,6 +61,13 @@ SQLCommand* SQLCommandFactory::handleCreateTableCommand(Vector<Table>& tables, c
 	return new CreateTableCommand(tables, columns, tblName);
 }
 
+SQLCommand* SQLCommandFactory::handleDropTableCommand(Vector<Table>& tables, const String& query)
+{
+	String tblName = query.substr(11, query.getLength() - 11);
+
+	return new DropTableCommand(tables, tblName);
+}
+
 SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String& query)
 {
 	SQLCommandType commandType = getCommandType(query);
@@ -68,6 +79,7 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 		return handleCreateTableCommand(tables, query);
 		break;
 	case SQLCommandType::DropTable:
+		return handleDropTableCommand(tables, query);
 		break;
 	case SQLCommandType::AlterTable:
 		break;

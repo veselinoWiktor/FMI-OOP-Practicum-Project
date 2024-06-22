@@ -6,7 +6,7 @@ void Database::loadDatabase(std::ifstream& ifs)
 	while (!ifs.eof())
 	{
 		ifs >> currTblPath;
-		Table currTbl((FilePath)currTblPath);
+		Table currTbl((FilePath)currTblPath); //TODO fix not setting correct tableName
 		tables.pushBack(currTbl);
 	}
 }

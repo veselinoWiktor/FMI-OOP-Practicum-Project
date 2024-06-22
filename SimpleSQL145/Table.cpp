@@ -33,8 +33,7 @@ Table::Table(const FilePath& path)
 		//TODO: throw exception
 	}
 
-	String filePath = path.getName().c_str();
-	filePath += path.getExtension().c_str();
+	String filePath = (path.getName() + path.getExtension());
 	std::ifstream ifs(filePath.c_str());
 	if (!ifs.is_open())
 	{
