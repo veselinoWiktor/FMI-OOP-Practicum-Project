@@ -1,6 +1,5 @@
 #pragma once
 #include "SQLResponse.h"
-#include "SQLEngine.h"
 
 enum class SQLCommandType
 {
