@@ -47,6 +47,21 @@ const String& Table::getName() const
 	return name;
 }
 
+size_t Table::getColumnsCount() const
+{
+	return columns.getSize();
+}
+
+void Table::insertRow(const Row& row)
+{
+	rows.pushBack(row);
+}
+
+void Table::insertRow(Row&& row)
+{
+	rows.pushBack(std::move(row));
+}
+
 void Table::insertColumn(const Column& column)
 {
 	columns.pushBack(column);

@@ -22,9 +22,10 @@ public:
 	Table(const FilePath& path);
 	
 	const String& getName() const;
+	size_t getColumnsCount() const;
 
-	/*void insertRow(const Row& row);
-	void insertRow(Row&& row);*/
+	void insertRow(const Row& row);
+	void insertRow(Row&& row);
 	void insertColumn(const Column& column);
 	void insertColumn(Column&& column);
 };
