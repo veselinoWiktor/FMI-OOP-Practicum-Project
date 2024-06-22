@@ -33,5 +33,7 @@ SQLResponse Database::executeQuery(const String& query)
 {
 	static SQLCommandFactory factory;
 	SQLCommand* command = factory.createCommand(tables, query);
-	return command->execute();
+	SQLResponse result = command->execute();
+	delete command;
+	return result;
 }
