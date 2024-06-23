@@ -97,7 +97,19 @@ const Vector<Row>& Table::getRows() const
 const String& Table::getCellVal(size_t rowIdx, const String& colName) const
 {
 	size_t colIdx = getColumnIndex(colName);
-	return rows[rowIdx].getField(colIdx);
+	return rows[rowIdx].getCell(colIdx);
+}
+
+void Table::setCellVal(size_t rowIdx, const String& colName, const String& newVal)
+{
+	size_t colIdx = getColumnIndex(colName); // TODO validate data
+	rows[rowIdx].setCellAt(colIdx, newVal);
+}
+
+void Table::setCellVal(size_t rowIdx, const String& colName, String&& newVal)
+{
+	size_t colIdx = getColumnIndex(colName); // TODO Validate data
+	rows[rowIdx].setCellAt(colIdx, std::move(newVal));
 }
 
 void Table::insertRow(const Row& row)
@@ -120,7 +132,7 @@ void Table::insertColumn(const Column& column)
 	columns.pushBack(column);
 	for (size_t i = 0; i < rows.getSize(); i++)
 	{
-		rows[i].addField("NULL");
+		rows[i].pushCell("NULL");
 	}
 }
 
@@ -129,7 +141,7 @@ void Table::insertColumn(Column&& column)
 	columns.pushBack(std::move(column));
 	for (size_t i = 0; i < rows.getSize(); i++)
 	{
-		rows[i].addField("NULL");
+		rows[i].pushCell("NULL");
 	}
 }
 
@@ -139,7 +151,7 @@ void Table::removeColumnAt(size_t colIdx)
 
 	for (size_t i = 0; i < rows.getSize(); i++)
 	{
-		rows[i].removeFieldAt(colIdx);
+		rows[i].removeCellAt(colIdx);
 	}
 }
 

@@ -33,6 +33,8 @@ public:
 	const Vector<Row>& getRows() const;
 
 	const String& getCellVal(size_t rowIdx, const String& colName) const;
+	void setCellVal(size_t rowIdx, const String& colName, const String& newVal);
+	void setCellVal(size_t rowIdx, const String& colName, String&& newVal);
 
 	void insertRow(const Row& row);
 	void insertRow(Row&& row);
@@ -46,7 +48,5 @@ public:
 	void removeColumnByName(const String& columnName);
 
 	void renameColumn(const String& columnName, const String& columnNewName);
-	
-	//void removeColumn(size_t columnIdx);
 };
 
