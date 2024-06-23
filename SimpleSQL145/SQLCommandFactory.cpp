@@ -240,7 +240,7 @@ SQLCommand* SQLCommandFactory::handleUpdateCommand(Vector<Table>& tables, std::s
 	SSUtils::clearWhiteSpaces(ssQuery);
 	ssQuery.getline(buff, 1024, ' '); // skips if there is where
 
-	if (buff == "where")
+	if ((String)buff == "where")
 	{
 		SSUtils::clearWhiteSpaces(ssQuery);
 		ssQuery.getline(buff, 1024, ';'); // gets where expression
@@ -320,12 +320,12 @@ SQLCommand* SQLCommandFactory::handleSelectCommand(Vector<Table>& tables, std::s
 	SSUtils::clearWhiteSpaces(ssQuery);
 	ssQuery.getline(buff, 1024, ' '); // gets if there is where
 
-	if (buff == "where")
+	if ((String)buff == "where")
 	{
 		SSUtils::clearWhiteSpaces(ssQuery);
 		ssQuery.getline(buff, 1024, ';'); // gets where expression
 		String whereExpression(buff);
-		return new SelectCommand(tbl, columnNames, &whereExpression);
+		return new SelectCommand(tbl, columnNames, whereExpression);
 	}
 	else
 	{

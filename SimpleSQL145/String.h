@@ -19,6 +19,7 @@ public:
 	String();
 	String(const char* str);
 	String(const String& other);
+	String(char ch, size_t length);
 	String(String&& other) noexcept;
 	String& operator=(const String& other);
 	String& operator=(String&& other) noexcept;

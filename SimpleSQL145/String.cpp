@@ -74,6 +74,18 @@ String::String(const char* str)
 	strcpy(data, str);
 }
 
+String::String(char ch, size_t length) : length(length)
+{
+	capacity = std::max(nextPowerOfTwo(length), 16ull);
+	data = new char[capacity + 1];
+	
+	for (size_t i = 0; i < length; i++)
+	{
+		data[i] = ch;
+	}
+	data[length] = '\0';
+}
+
 String::String(const String& other)
 {
 	copyFrom(other);

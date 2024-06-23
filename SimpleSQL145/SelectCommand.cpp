@@ -1,11 +1,11 @@
 #include "SelectCommand.h"
 
 SelectCommand::SelectCommand(Table& table, const Vector<String>& columnNames)
-	: SelectCommand(table, columnNames, nullptr)
+	: SelectCommand(table, columnNames, "")
 {
 }
 
-SelectCommand::SelectCommand(Table& table, const Vector<String>& columnNames, const String* whereExpression)
+SelectCommand::SelectCommand(Table& table, const Vector<String>& columnNames, const String& whereExpression)
 	: TableCommand(table), columnNames(columnNames), whereExpression(whereExpression)
 {
 }
@@ -22,7 +22,7 @@ SQLResponse SelectCommand::execute()
 	Vector<Row> tableRows = table.getRows();
 	Vector<Column> tableColumns = table.getColumns();
 
-	if (!whereExpression)
+	if (whereExpression == "")
 	{
 		for (size_t i = 0; i < tableRows.getSize(); i++)
 		{
@@ -39,7 +39,7 @@ SQLResponse SelectCommand::execute()
 	}
 	else
 	{
-		WhereExpressionHandler handler(*whereExpression);
+		WhereExpressionHandler handler(whereExpression);
 		for (size_t i = 0; i < tableRows.getSize(); i++)
 		{
 			if (!handler.evaluate(table, i))
@@ -59,5 +59,5 @@ SQLResponse SelectCommand::execute()
 		}
 	}
 
-	return SQLResponse();
+	return SQLResponse(newTable);
 }

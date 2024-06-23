@@ -85,7 +85,7 @@ bool Equals::eval(Table& table, size_t rowIdx) const
 	if (currCol.type == ColumnType::Integer)
 	{
 		int fieldValue = DataUtils::intParse(table.getCellVal(rowIdx, columnName));
-		if (fieldValue = value)
+		if (fieldValue == value)
 		{
 			return true;
 		}

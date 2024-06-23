@@ -6,10 +6,10 @@ class SelectCommand : public TableCommand
 {
 private:
 	Vector<String> columnNames;
-	const String* whereExpression;
+	String whereExpression;
 public:
 	SelectCommand(Table& table, const Vector<String>& columnNames);
-	SelectCommand(Table& table, const Vector<String>& columnNames, const String* whereExpression);
+	SelectCommand(Table& table, const Vector<String>& columnNames, const String& whereExpression);
 	SQLResponse execute() override;
 };
 
