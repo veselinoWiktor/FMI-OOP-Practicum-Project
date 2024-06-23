@@ -22,22 +22,33 @@ size_t Row::getCellsCount() const
 	return fields.getSize();
 }
 
-void Row::addField(const String& field)
+void Row::pushCell(const String& field)
 {
-	fields.pushBack(Field{field});
+	fields.pushBack(Field{ field });
 }
 
-void Row::addField(String&& field)
+void Row::pushCell(String&& field)
 {
 	fields.pushBack(Field{ std::move(field) });
 }
 
-void Row::removeFieldAt(size_t fieldIdx)
+
+void Row::setCellAt(size_t fieldIdx, const String& field)
 {
-	fields.popAt(fieldIdx);
+	fields[fieldIdx].data = field;
 }
 
-const String& Row::getField(size_t fieldIdx) const
+void Row::setCellAt(size_t fieldIdx, String&& field)
+{
+	fields[fieldIdx].data = std::move(field);
+}
+
+const String& Row::getCell(size_t fieldIdx) const
 {
 	return fields[fieldIdx].data;
+}
+
+void Row::removeCellAt(size_t fieldIdx)
+{
+	fields.popAt(fieldIdx);
 }
