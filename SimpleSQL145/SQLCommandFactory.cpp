@@ -18,10 +18,13 @@ SQLCommandType SQLCommandFactory::getCommandType(const String& command)
 	{
 		return SQLCommandType::Insert;
 	}
+	else if (command == "delete")
+	{
+		return SQLCommandType::Delete;
+	}
 
 	return SQLCommandType::Select;
 }
-
 
 SQLCommand* SQLCommandFactory::handleCreateTableCommand(Vector<Table>& tables, std::stringstream& ssQuery)
 {
@@ -205,6 +208,27 @@ SQLCommand* SQLCommandFactory::handleInsertCommand(Vector<Table>& tables, std::s
 	return new InsertCommand(tbl, rows);
 }
 
+SQLCommand* SQLCommandFactory::handleDeleteCommand(Vector<Table>& tables, std::stringstream& ssQuery)
+{
+	char buff[1024];
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // skips "from"
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // gets table name
+	String tblName(buff);
+	Table& tbl = TableUtils::findTable(tables, tblName);
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // skips "where" !!! it is required in delete command
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ';'); // gets where expression
+	String whereExpression(buff);
+
+	return new DeleteCommand(tbl, whereExpression);
+}
+
 SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String& query)
 {
 	std::stringstream ssQuery(query.c_str());
@@ -233,6 +257,7 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 	case SQLCommandType::Update:
 		break;
 	case SQLCommandType::Delete:
+		return handleDeleteCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::Select:
 		break;
