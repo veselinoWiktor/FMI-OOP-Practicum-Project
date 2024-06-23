@@ -14,6 +14,11 @@ namespace TableUtils
 	const Table& findTable(const Vector<Table>& tables, const String& tblName);
 }
 
+namespace DataUtils
+{
+	int intParse(const String& str);
+}
+
 class Utils
 {
 };

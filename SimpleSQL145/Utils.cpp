@@ -29,3 +29,16 @@ const Table& TableUtils::findTable(const Vector<Table>& tables, const String& tb
 		}
 	}
 }
+
+int DataUtils::intParse(const String& str)
+{
+	int res = 0;
+	int n = str.getLength();
+
+	for (size_t i = 0; i < n; i++)
+	{
+		res = res * 10 + (int(str.c_str()[i]) - 48);
+	}
+
+	return res;
+}
