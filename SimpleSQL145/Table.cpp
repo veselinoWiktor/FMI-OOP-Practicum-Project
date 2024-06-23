@@ -97,6 +97,11 @@ const Vector<Row>& Table::getRows() const
 const String& Table::getCellVal(size_t rowIdx, const String& colName) const
 {
 	size_t colIdx = getColumnIndex(colName);
+	return getCellVal(rowIdx, colIdx);
+}
+
+const String& Table::getCellVal(size_t rowIdx, size_t colIdx) const
+{
 	return rows[rowIdx].getCell(colIdx);
 }
 

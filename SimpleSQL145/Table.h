@@ -33,6 +33,7 @@ public:
 	const Vector<Row>& getRows() const;
 
 	const String& getCellVal(size_t rowIdx, const String& colName) const;
+	const String& getCellVal(size_t rowIdx, size_t colIdx) const;
 	void setCellVal(size_t rowIdx, const String& colName, const String& newVal);
 	void setCellVal(size_t rowIdx, const String& colName, String&& newVal);
 

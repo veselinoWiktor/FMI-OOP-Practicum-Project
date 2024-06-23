@@ -9,6 +9,7 @@
 #include "InsertCommand.h"
 #include "UpdateCommand.h"
 #include "DeleteCommand.h"
+#include "SelectCommand.h"
 
 #include "Utils.h"
 
@@ -24,6 +25,7 @@ class SQLCommandFactory
 	SQLCommand* handleInsertCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleUpdateCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleDeleteCommand(Vector<Table>& tables, std::stringstream& ssQuery);
+	SQLCommand* handleSelectCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 public:
 	SQLCommand* createCommand(Vector<Table>& tables, const String& query);
 };

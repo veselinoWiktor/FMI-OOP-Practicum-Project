@@ -14,6 +14,10 @@ SQLCommandType SQLCommandFactory::getCommandType(const String& command)
 	{
 		return SQLCommandType::AlterTable;
 	}
+	else if (command == "show")
+	{
+		return SQLCommandType::ShowTables;
+	}
 	else if (command == "insert")
 	{
 		return SQLCommandType::Insert;
@@ -26,8 +30,10 @@ SQLCommandType SQLCommandFactory::getCommandType(const String& command)
 	{
 		return SQLCommandType::Delete;
 	}
-
-	return SQLCommandType::Select;
+	else
+	{
+		return SQLCommandType::Select;
+	}
 }
 
 SQLCommand* SQLCommandFactory::handleCreateTableCommand(Vector<Table>& tables, std::stringstream& ssQuery)
@@ -269,6 +275,64 @@ SQLCommand* SQLCommandFactory::handleDeleteCommand(Vector<Table>& tables, std::s
 	return new DeleteCommand(tbl, whereExpression);
 }
 
+// select * from test_table;
+// select field1 from test_table;
+// select field1 from test_table where field1=2;
+SQLCommand* SQLCommandFactory::handleSelectCommand(Vector<Table>& tables, std::stringstream& ssQuery)
+{
+	char buff[1024];
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); 
+	Vector<String> columnNames;
+	if ((String)buff == "*")
+	{
+		Vector<Column> columns = tables[0].getColumns();
+		
+		for (size_t i = 0; i < columns.getSize(); i++)
+		{
+			columnNames.pushBack(columns[i].name);
+		}
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // skips "from"
+	}
+	else
+	{
+		while ((String)buff != "from")
+		{
+			int buffLen = strlen(buff);
+			if (buff[buffLen - 1] == ',')
+			{
+				buff[buffLen - 1] = '\0';
+			}
+			columnNames.pushBack(buff);
+
+			SSUtils::clearWhiteSpaces(ssQuery);
+			ssQuery.getline(buff, 1024, ' '); // that would skip "from automatically
+		}
+	}
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // gets table name
+	String tblName(buff); 
+	Table& tbl = TableUtils::findTable(tables, tblName);
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // gets if there is where
+
+	if (buff == "where")
+	{
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ';'); // gets where expression
+		String whereExpression(buff);
+		return new SelectCommand(tbl, columnNames, &whereExpression);
+	}
+	else
+	{
+		return new SelectCommand(tbl, columnNames);
+	}
+}
+
 SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String& query)
 {
 	std::stringstream ssQuery(query.c_str());
@@ -290,6 +354,7 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 		return handleAlterTableCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::ShowTables:
+		return nullptr;
 		break;
 	case SQLCommandType::Insert:
 		return handleInsertCommand(tables, ssQuery);
@@ -301,10 +366,7 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 		return handleDeleteCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::Select:
-		break;
-	default:
+		return handleSelectCommand(tables, ssQuery);
 		break;
 	}
-
-	return nullptr;
 }
