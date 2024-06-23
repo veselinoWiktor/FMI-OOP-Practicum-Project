@@ -18,6 +18,10 @@ SQLCommandType SQLCommandFactory::getCommandType(const String& command)
 	{
 		return SQLCommandType::Insert;
 	}
+	else if (command == "update")
+	{
+		return SQLCommandType::Update;
+	}
 	else if (command == "delete")
 	{
 		return SQLCommandType::Delete;
@@ -194,18 +198,54 @@ SQLCommand* SQLCommandFactory::handleInsertCommand(Vector<Table>& tables, std::s
 			if (columnNames.contains(tblColumns[i].name))
 			{
 				ssQuery.getline(buff, 1024, ',');
-				currRow.addField(buff);
+				currRow.pushCell(buff);
 				SSUtils::clearWhiteSpaces(ssQuery);
 			}
 			else
 			{
-				currRow.addField("NULL");
+				currRow.pushCell("NULL");
 			}
 		}
 		rows.pushBack(currRow);
 	}
 	
 	return new InsertCommand(tbl, rows);
+}
+
+//update test_table set field2=2.0 where (((field1)>(2))&((field1)<(4)));
+SQLCommand* SQLCommandFactory::handleUpdateCommand(Vector<Table>& tables, std::stringstream& ssQuery)
+{
+	char buff[1024];
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // gets table name
+	String tblName(buff);
+	Table& tbl = TableUtils::findTable(tables, tblName);
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // skips "set"
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, '='); // gets column name
+	String columnName(buff);
+
+	ssQuery.getline(buff, 1024, ' '); // gets update value
+	String value(buff);
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // skips if there is where
+
+	if (buff == "where")
+	{
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ';'); // gets where expression
+		String whereExpression(buff);
+
+		return new UpdateCommand(tbl, columnName, value, &whereExpression);
+	}
+	else
+	{
+		return new UpdateCommand(tbl, columnName, value);
+	}
 }
 
 SQLCommand* SQLCommandFactory::handleDeleteCommand(Vector<Table>& tables, std::stringstream& ssQuery)
@@ -255,6 +295,7 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 		return handleInsertCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::Update:
+		return handleUpdateCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::Delete:
 		return handleDeleteCommand(tables, ssQuery);
