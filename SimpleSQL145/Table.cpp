@@ -57,6 +57,33 @@ const Vector<Column>& Table::getColumns() const
 	return columns;
 }
 
+const Column& Table::getColumn(const String& colName)
+{
+	for (size_t i = 0; i < columns.getSize(); i++)
+	{
+		if (columns[i].name == colName)
+		{
+			return columns[i];
+		}
+	}
+}
+
+const Column& Table::getColumn(size_t idx)
+{
+	return columns[idx];
+}
+
+size_t Table::getColumnIndex(const String& colName) const
+{
+	for (size_t i = 0; i < columns.getSize(); i++)
+	{
+		if (columns[i].name == colName)
+		{
+			return i;
+		}
+	}
+}
+
 size_t Table::getRowsCount() const
 {
 	return rows.getSize();
@@ -65,6 +92,12 @@ size_t Table::getRowsCount() const
 const Vector<Row>& Table::getRows() const
 {
 	return rows;
+}
+
+const String& Table::getCellVal(size_t rowIdx, const String& colName) const
+{
+	size_t colIdx = getColumnIndex(colName);
+	return rows[rowIdx].getField(colIdx);
 }
 
 void Table::insertRow(const Row& row)
@@ -103,6 +136,11 @@ void Table::insertColumn(Column&& column)
 void Table::removeColumnAt(size_t colIdx)
 {
 	columns.popAt(colIdx);
+
+	for (size_t i = 0; i < rows.getSize(); i++)
+	{
+		rows[i].removeFieldAt(colIdx);
+	}
 }
 
 void Table::removeColumnByName(const String& columnName)
