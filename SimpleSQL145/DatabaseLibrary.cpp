@@ -21,9 +21,16 @@ void Database::saveDatabase()
 {
 	String path = dbPath.getDirectory() + dbPath.getName() + dbPath.getExtension();
 	std::ofstream ofs(path.c_str());
-
-	for (size_t i = 0; i < tables.getSize(); i++)
+	
+	int tableSize = tables.getSize();
+	for (size_t i = 0; i < tableSize; i++)
+	{
 		ofs << (dbPath.getDirectory() + tables[i].getName() + ".ss145");
+		if (i < tableSize - 1)
+		{
+			ofs << '\n';
+		}
+	}
 
 	ofs.close();
 
@@ -42,11 +49,21 @@ void Database::saveTable(const Table& tbl)
 
 	for (size_t i = 0; i < tblColumnCount; i++)
 	{
-		ofs << columns[i].name << ";" << (int)columns[i].type << '\n';
+		ofs << columns[i].name << ";" << (int)columns[i].type;
+		if (i < tblColumnCount - 1)
+		{
+			ofs << '\n';
+		}
 	}
 
 	Vector<Row> rows = tbl.getRows();
 	size_t rowSize = rows.getSize();
+
+	if (rowSize != 0)
+	{
+		ofs << '\n';
+	}
+
 	for (size_t i = 0; i < rowSize; i++)
 	{
 		for (size_t j = 0; j < tblColumnCount; j++)

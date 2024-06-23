@@ -289,17 +289,23 @@ SQLCommand* SQLCommandFactory::handleSelectCommand(Vector<Table>& tables, std::s
 	SSUtils::clearWhiteSpaces(ssQuery);
 	ssQuery.getline(buff, 1024, ' '); 
 	Vector<String> columnNames;
+	String tblName;
 	if ((String)buff == "*")
 	{
-		Vector<Column> columns = tables[0].getColumns();
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // skips "from"
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // gets table name
+		tblName = buff;
+		Table& tbl = TableUtils::findTable(tables, tblName);
+
+		Vector<Column> columns = tbl.getColumns();
 		
 		for (size_t i = 0; i < columns.getSize(); i++)
 		{
 			columnNames.pushBack(columns[i].name);
 		}
-
-		SSUtils::clearWhiteSpaces(ssQuery);
-		ssQuery.getline(buff, 1024, ' '); // skips "from"
 	}
 	else
 	{
@@ -315,11 +321,12 @@ SQLCommand* SQLCommandFactory::handleSelectCommand(Vector<Table>& tables, std::s
 			SSUtils::clearWhiteSpaces(ssQuery);
 			ssQuery.getline(buff, 1024, ' '); // that would skip "from automatically
 		}
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // gets table name
+		tblName = buff;
 	}
 
-	SSUtils::clearWhiteSpaces(ssQuery);
-	ssQuery.getline(buff, 1024, ' '); // gets table name
-	String tblName(buff); 
 	Table& tbl = TableUtils::findTable(tables, tblName);
 
 	SSUtils::clearWhiteSpaces(ssQuery);
