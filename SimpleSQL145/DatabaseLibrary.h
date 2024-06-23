@@ -11,12 +11,15 @@
 class Database
 {
 private:
-	FilePath pathToDB = (String)"No path"; // TODO: might want to fix this cast
+	FilePath dbPath = "No path"; // TODO: might want to fix this cast
 	Vector<Table> tables;
 
 	void loadDatabase(std::ifstream& ifs);
+	void saveDatabase();
+	void saveTable(const Table& tbl);
 public:
 	Database(const FilePath& relativePath);
+	~Database();
 	SQLResponse executeQuery(const String& query);
 };
 

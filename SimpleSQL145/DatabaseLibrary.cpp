@@ -1,4 +1,6 @@
 #include "DatabaseLibrary.h"
+#include <filesystem>
+namespace fs = std::filesystem;
 
 void Database::loadDatabase(std::ifstream& ifs)
 {
@@ -6,8 +8,56 @@ void Database::loadDatabase(std::ifstream& ifs)
 	while (!ifs.eof())
 	{
 		ifs >> currTblPath;
+		if (currTblPath == (String)"")
+		{
+			break;
+		}
 		Table currTbl((FilePath)currTblPath); //TODO fix not setting correct tableName
 		tables.pushBack(currTbl);
+	}
+}
+
+void Database::saveDatabase()
+{
+	String path = dbPath.getDirectory() + dbPath.getName() + dbPath.getExtension();
+	std::ofstream ofs(path.c_str());
+
+	for (size_t i = 0; i < tables.getSize(); i++)
+		ofs << (dbPath.getDirectory() + tables[i].getName());
+
+	ofs.close();
+
+	for (size_t i = 0; i < tables.getSize(); i++)
+		saveTable(tables[i]);
+}
+
+void Database::saveTable(const Table& tbl)
+{
+	String path = (dbPath.getDirectory() + tbl.getName());
+	std::ofstream ofs(path.c_str());
+
+	Vector<Column> columns = tbl.getColumns();
+	int tblColumnCount = columns.getSize();
+	ofs << tblColumnCount << '\n';
+
+	for (size_t i = 0; i < tblColumnCount; i++)
+	{
+		ofs << columns[i].name << ";" << (int)columns[i].type << '\n';
+	}
+
+	Vector<Row> rows = tbl.getRows();
+	size_t rowSize = rows.getSize();
+	for (size_t i = 0; i < rowSize; i++)
+	{
+		for (size_t j = 0; j < tblColumnCount; j++)
+		{
+			
+			if (tblColumnCount - 1 == j)
+				ofs << rows[i].getCell(j);
+			else
+				ofs << rows[i].getCell(j) << ";";
+		}
+		ofs << '\n';
 	}
 }
 
@@ -18,7 +68,18 @@ Database::Database(const FilePath& relativePath)
 		throw std::logic_error("Database::Database(); File was not with extension .db");
 	}
 
-	String path = (relativePath.getName() + relativePath.getExtension());
+	String path = (relativePath.getDirectory() + relativePath.getName() + relativePath.getExtension());
+	dbPath = relativePath;
+
+	//!!!Totaly for better dynamic of the project
+	//If without this to create database the directory should be created and the .db file be placed
+	//and then the database would be loaded (not created) empty
+	if (!fs::is_directory(relativePath.getDirectory().c_str()) || !fs::exists(relativePath.getDirectory().c_str())) { // Check if src folder exists
+		fs::create_directory(relativePath.getDirectory().c_str()); // create src folder
+		std::ofstream ofs(path.c_str());
+		ofs.close();
+	}
+
 	std::ifstream ifs(path.c_str());
 	if (!ifs.is_open())
 	{
@@ -36,4 +97,9 @@ SQLResponse Database::executeQuery(const String& query)
 	SQLResponse result = command->execute();
 	delete command;
 	return result;
+}
+
+Database::~Database()
+{
+	saveDatabase();
 }

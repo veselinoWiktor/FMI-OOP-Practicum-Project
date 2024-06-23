@@ -9,14 +9,28 @@ FilePath::FilePath(const String& fileName)
 {
 	const char* beg = fileName.c_str();
 	const char* end = fileName.c_str() + fileName.getLength();
-	const char* iter = end;
+	const char* dirIter = end;
 
-	while (iter != beg && *iter != '.') {
-		iter--;
+	while (dirIter != beg && *dirIter != '/') {
+		dirIter--;
+	}
+	dirIter++;
+
+	this->directory = fileName.substr(0, dirIter - beg);
+
+	const char* nameIter = end;
+
+	while (nameIter != beg && *nameIter != '.') {
+		nameIter--;
 	}
 
-	this->name = fileName.substr(0, iter - beg);
-	this->extension = fileName.substr(iter - beg, end - iter);
+	this->name = fileName.substr(dirIter - beg, nameIter - dirIter);
+	this->extension = fileName.substr(nameIter - beg, end - nameIter);
+}
+
+const String& FilePath::getDirectory() const
+{
+	return directory;
 }
 
 const String& FilePath::getName() const
