@@ -55,7 +55,11 @@ String TableParser::parseRow(const Row& row, const Vector<int>& colsLengths)
 	for (size_t i = 0; i < cellsCount; i++)
 	{
 		String currCell = row.getCell(i);
-		result += String(' ', colsLengths[i] - currCell.getLength());
+		int padding = (colsLengths[i] - currCell.getLength());
+		if (padding >= 0)
+		{
+			result += String(' ', padding);
+		}
 		result += currCell;
 
 		if (i == cellsCount - 1)
