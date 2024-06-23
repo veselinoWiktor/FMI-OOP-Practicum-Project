@@ -85,6 +85,11 @@ SQLCommand* SQLCommandFactory::handleDropTableCommand(Vector<Table>& tables, std
 	return new DropTableCommand(tables, tblName);
 }
 
+SQLCommand* SQLCommandFactory::handleShowTablesCommand(Vector<Table>& tables, std::stringstream& ssQuery, const String& databaseName)
+{
+	return new ShowCommand(tables, databaseName);
+}
+
 SQLCommand* SQLCommandFactory::handleAlterTableCommand(Vector<Table>& tables, std::stringstream& ssQuery)
 {
 	SSUtils::clearWhiteSpaces(ssQuery);
@@ -333,7 +338,7 @@ SQLCommand* SQLCommandFactory::handleSelectCommand(Vector<Table>& tables, std::s
 	}
 }
 
-SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String& query)
+SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String& query, const String& databaseName)
 {
 	std::stringstream ssQuery(query.c_str());
 	SSUtils::clearWhiteSpaces(ssQuery);
@@ -354,7 +359,7 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 		return handleAlterTableCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::ShowTables:
-		return nullptr;
+		return handleShowTablesCommand(tables, ssQuery, databaseName);
 		break;
 	case SQLCommandType::Insert:
 		return handleInsertCommand(tables, ssQuery);

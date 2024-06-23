@@ -6,6 +6,7 @@
 #include "CreateTableCommand.h"
 #include "DropTableCommand.h"
 #include "AlterTableCommands.h"
+#include "ShowCommand.h"
 #include "InsertCommand.h"
 #include "UpdateCommand.h"
 #include "DeleteCommand.h"
@@ -20,13 +21,13 @@ class SQLCommandFactory
 
 	SQLCommand* handleCreateTableCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleDropTableCommand(Vector<Table>& tables, std::stringstream& ssQuery);
-
+	SQLCommand* handleShowTablesCommand(Vector<Table>& tables, std::stringstream& ssQuery, const String& databaseName);
 	SQLCommand* handleAlterTableCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleInsertCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleUpdateCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleDeleteCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleSelectCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 public:
-	SQLCommand* createCommand(Vector<Table>& tables, const String& query);
+	SQLCommand* createCommand(Vector<Table>& tables, const String& query, const String& databaseName);
 };
 
