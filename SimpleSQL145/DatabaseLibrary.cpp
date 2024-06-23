@@ -23,7 +23,7 @@ void Database::saveDatabase()
 	std::ofstream ofs(path.c_str());
 
 	for (size_t i = 0; i < tables.getSize(); i++)
-		ofs << (dbPath.getDirectory() + tables[i].getName());
+		ofs << (dbPath.getDirectory() + tables[i].getName() + ".ss145");
 
 	ofs.close();
 
@@ -33,7 +33,7 @@ void Database::saveDatabase()
 
 void Database::saveTable(const Table& tbl)
 {
-	String path = (dbPath.getDirectory() + tbl.getName());
+	String path = (dbPath.getDirectory() + tbl.getName() + ".ss145");
 	std::ofstream ofs(path.c_str());
 
 	Vector<Column> columns = tbl.getColumns();

@@ -40,7 +40,7 @@ Table::Table(const FilePath& path)
 		throw std::logic_error("Table::Tabl(); Database file was already open!");
 	}
 
-	name = (path.getName() + path.getExtension());
+	name = (path.getName());
 	loadTable(ifs);
 }
 
