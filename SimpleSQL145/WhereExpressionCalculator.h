@@ -75,14 +75,9 @@ struct Disjunction : public LogicalOperation
 	BooleanExpression* clone() const override;
 };
 
+static BooleanExpression* expressionFactory(StringView str);
 
-//where (field1 > 2);
-//where ((field1 > 2) and (field1 < 4));
-//where (field1 > 2);
-//where (field1 = 2);
-BooleanExpression* expressionFactory(StringView str)
-{
-}
+static void parseComparisonArgs(String& colName, int& value, StringView& str, int strIdx);
 
 class WhereExpressionHandler
 {
