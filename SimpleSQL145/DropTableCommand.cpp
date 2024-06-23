@@ -17,6 +17,5 @@ SQLResponse DropTableCommand::execute()
 	}
 
 	tables.popAt(dropTblIdx);
-	return SQLResponse();
-	//TODO implement SQLResponse return
+	return SQLResponse("Query OK");
 }

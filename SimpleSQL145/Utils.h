@@ -17,9 +17,5 @@ namespace TableUtils
 namespace DataUtils
 {
 	int intParse(const String& str);
+	String intToString(int num);
 }
-
-class Utils
-{
-};
-

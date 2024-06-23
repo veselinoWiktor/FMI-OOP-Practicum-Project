@@ -8,8 +8,7 @@ AlterAddCommand::AlterAddCommand(Table& table, const Column& column)
 SQLResponse AlterAddCommand::execute()
 {
 	table.insertColumn(std::move(column));
-
-	return SQLResponse(); // TODO fix SQLResponse();
+	return SQLResponse("QueryOK");
 }
 
 AlterRenameCommand::AlterRenameCommand(Table& table, const String& colName, const String& newColName)
@@ -20,8 +19,7 @@ AlterRenameCommand::AlterRenameCommand(Table& table, const String& colName, cons
 SQLResponse AlterRenameCommand::execute()
 {
 	table.renameColumn(colName, newColName);
-
-	return SQLResponse();
+	return SQLResponse("Query OK");
 }
 
 AlterDropCommand::AlterDropCommand(Table& table, const String& colName)
@@ -32,5 +30,5 @@ AlterDropCommand::AlterDropCommand(Table& table, const String& colName)
 SQLResponse AlterDropCommand::execute()
 {
 	table.removeColumnByName(colName);
-	return SQLResponse();
+	return SQLResponse("Query OK");
 }

@@ -42,3 +42,13 @@ int DataUtils::intParse(const String& str)
 
 	return res;
 }
+
+String DataUtils::intToString(int num) // cheeky way to convert int to string, I was in a hurry
+{
+	std::stringstream ss;
+	ss << num;
+	char buff[12]; // max chars for 32-bit int
+	ss.get(buff, 12);
+	return buff;
+}
+

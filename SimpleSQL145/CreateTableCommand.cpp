@@ -15,6 +15,5 @@ SQLResponse CreateTableCommand::execute()
 
 	tables.pushBack(newTable);
 
-	return SQLResponse();
-	//TODO add SQLResponse
+	return SQLResponse("Query OK");
 }
