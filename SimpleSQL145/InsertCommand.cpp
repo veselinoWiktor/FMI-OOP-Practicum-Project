@@ -9,15 +9,10 @@ InsertCommand::InsertCommand(Table& table, const Vector<Row>& rows)
 
 SQLResponse InsertCommand::execute()
 {
-	//int colsCount = table.getColumnsCount();
-	//if (rows[0].getCellsCount() > colsCount)
-	//{
-	//	//TODO can't have this;
-	//}
 	int affectedRows = 0;
 	for (size_t i = 0; i < rows.getSize(); i++)
 	{
-		table.insertRow(std::move(rows[i])); //HACK will be faster
+		table.insertRow(std::move(rows[i]));
 		affectedRows++;
 	}
 

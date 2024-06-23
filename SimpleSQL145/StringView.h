@@ -23,4 +23,3 @@ public:
 
 bool operator==(const StringView& lhs, const StringView& rhs);
 bool operator!=(const StringView& lhs, const StringView& rhs);
-//TODO: implement comparison operators 

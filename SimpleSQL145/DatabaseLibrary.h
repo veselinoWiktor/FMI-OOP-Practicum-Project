@@ -11,7 +11,7 @@
 class Database
 {
 private:
-	FilePath dbPath = "No path"; // TODO: might want to fix this cast
+	FilePath dbPath = "No path";
 	Vector<Table> tables;
 
 	void loadDatabase(std::ifstream& ifs);
