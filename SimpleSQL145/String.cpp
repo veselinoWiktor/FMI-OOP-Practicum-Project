@@ -150,14 +150,13 @@ String& String::operator+=(const String& other)
 
 String& String::operator+=(char ch)
 {
-	length++;
-
-	if (length > capacity)
+	if (length + 1 > capacity)
 	{
 		resize(nextPowerOfTwo(length));
 	}
 
-	strcat(data, (const char*)ch);
+	data[length++] = ch;
+	data[length] = '\0';
 	return *this;
 }
 
