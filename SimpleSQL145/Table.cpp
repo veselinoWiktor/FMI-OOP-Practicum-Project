@@ -30,15 +30,17 @@ Table::Table(const FilePath& path)
 {
 	if (path.getExtension() != ".ss145")
 	{
-		//TODO: throw exception
+		throw std::logic_error("Table::Tabl(); File was not with extension .ss145");
 	}
 
-	String filePath = (path.getName() + path.getExtension());
+	String filePath = (path.getDirectory() + path.getName() + path.getExtension());
 	std::ifstream ifs(filePath.c_str());
 	if (!ifs.is_open())
 	{
-		//TODO: throw exception
+		throw std::logic_error("Table::Tabl(); Database file was already open!");
 	}
+
+	name = (path.getName() + path.getExtension());
 	loadTable(ifs);
 }
 

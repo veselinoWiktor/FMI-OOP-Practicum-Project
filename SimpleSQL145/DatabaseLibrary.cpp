@@ -57,7 +57,9 @@ void Database::saveTable(const Table& tbl)
 			else
 				ofs << rows[i].getCell(j) << ";";
 		}
-		ofs << '\n';
+
+		if (i < rowSize - 1)
+			ofs << '\n';
 	}
 }
 
