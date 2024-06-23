@@ -31,3 +31,13 @@ void Row::addField(String&& field)
 {
 	fields.pushBack(Field{ std::move(field) });
 }
+
+void Row::removeFieldAt(size_t fieldIdx)
+{
+	fields.popAt(fieldIdx);
+}
+
+const String& Row::getField(size_t fieldIdx) const
+{
+	return fields[fieldIdx].data;
+}

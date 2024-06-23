@@ -24,6 +24,10 @@ public:
 	void addField(const String& field);
 	void addField(String&& field);
 
+	void removeFieldAt(size_t fieldIdx);
+
+	const String& getField(size_t fieldIdx) const;
+
 	//friend std::ofstream& operator<<(std::ofstream& ofs, const Row& row);
 	friend std::ifstream& operator>>(std::ifstream& ifs, Row& row);
 };
