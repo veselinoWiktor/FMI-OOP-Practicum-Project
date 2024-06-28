@@ -18,6 +18,14 @@ int main()
 	db.executeQuery("delete from table1.ss145 where (((field1)>(2))&((field1)<(4)))");
 	db.executeQuery("drop table table1.ss145");*/
 
+
+	/*
+	* test/test.db
+	* create table table1 (field1 int, field2 text, field3 real)
+	* insert into table1 (field1, field2) values (1, viktor), (2, deschi)
+	* update table1 set field3=3.0 where ((field1)=(1))
+	*/
+
 	std::cout << "Enter path to database" << std::endl;
 	String pathToDB;
 	std::cout << CIN_MESSAGE;

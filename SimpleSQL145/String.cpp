@@ -150,7 +150,7 @@ String& String::operator+=(const String& other)
 {
 	size_t newLength = length + other.length;
 
-	if (newLength > capacity)
+	if (newLength >= capacity)
 	{
 		resize(nextPowerOfTwo(newLength));
 	}

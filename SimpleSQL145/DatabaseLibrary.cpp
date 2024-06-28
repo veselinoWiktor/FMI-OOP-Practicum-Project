@@ -111,11 +111,18 @@ Database::Database(const FilePath& relativePath)
 
 SQLResponse Database::executeQuery(const String& query)
 {
-	static SQLCommandFactory factory;
-	SQLCommand* command = factory.createCommand(tables, query, dbPath.getName());
-	SQLResponse result = command->execute();
-	delete command;
-	return result;
+	try
+	{
+		static SQLCommandFactory factory;
+		SQLCommand* command = factory.createCommand(tables, query, dbPath.getName());
+		SQLResponse result = command->execute();
+		delete command;
+		return result;
+	}
+	catch (const std::exception& e)
+	{
+		return SQLResponse(e.what());
+	}
 }
 
 Database::~Database()

@@ -85,7 +85,7 @@ SQLCommand* SQLCommandFactory::handleDropTableCommand(Vector<Table>& tables, std
 	return new DropTableCommand(tables, tblName);
 }
 
-SQLCommand* SQLCommandFactory::handleShowTablesCommand(Vector<Table>& tables, std::stringstream& ssQuery, const String& databaseName)
+SQLCommand* SQLCommandFactory::handleShowTablesCommand(Vector<Table>& tables, const String& databaseName)
 {
 	return new ShowCommand(tables, databaseName);
 }
@@ -251,7 +251,7 @@ SQLCommand* SQLCommandFactory::handleUpdateCommand(Vector<Table>& tables, std::s
 		ssQuery.getline(buff, 1024, ';'); // gets where expression
 		String whereExpression(buff);
 
-		return new UpdateCommand(tbl, columnName, value, &whereExpression);
+		return new UpdateCommand(tbl, columnName, value, whereExpression);
 	}
 	else
 	{
@@ -283,64 +283,105 @@ SQLCommand* SQLCommandFactory::handleDeleteCommand(Vector<Table>& tables, std::s
 // select * from test_table;
 // select field1 from test_table;
 // select field1 from test_table where field1=2;
+// select * from join1 where (((field1_1)>(1))&((field1_1)<(3)));
+// select * from join1 join join2 on field1_1=field1_2
+// select field1_1, field1_2, field2_2 from join1 join join2 on field1_1=field1_2
 SQLCommand* SQLCommandFactory::handleSelectCommand(Vector<Table>& tables, std::stringstream& ssQuery)
 {
 	char buff[1024];
-	SSUtils::clearWhiteSpaces(ssQuery);
-	ssQuery.getline(buff, 1024, ' '); 
 	Vector<String> columnNames;
-	String tblName;
-	if ((String)buff == "*")
+
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' ');
+	while ((String)buff != "from")
 	{
-		SSUtils::clearWhiteSpaces(ssQuery);
-		ssQuery.getline(buff, 1024, ' '); // skips "from"
-
-		SSUtils::clearWhiteSpaces(ssQuery);
-		ssQuery.getline(buff, 1024, ' '); // gets table name
-		tblName = buff;
-		Table& tbl = TableUtils::findTable(tables, tblName);
-
-		Vector<Column> columns = tbl.getColumns();
-		
-		for (size_t i = 0; i < columns.getSize(); i++)
+		size_t buffLen = strlen(buff);
+		if (buff[buffLen - 1] == ',')
 		{
-			columnNames.pushBack(columns[i].name);
+			buff[buffLen - 1] = '\0';
 		}
-	}
-	else
-	{
-		while ((String)buff != "from")
-		{
-			int buffLen = strlen(buff);
-			if (buff[buffLen - 1] == ',')
-			{
-				buff[buffLen - 1] = '\0';
-			}
-			columnNames.pushBack(buff);
-
-			SSUtils::clearWhiteSpaces(ssQuery);
-			ssQuery.getline(buff, 1024, ' '); // that would skip "from automatically
-		}
-
+		columnNames.pushBack(buff);
 		SSUtils::clearWhiteSpaces(ssQuery);
-		ssQuery.getline(buff, 1024, ' '); // gets table name
-		tblName = buff;
+		ssQuery.getline(buff, 1024, ' '); // that would skip "from" automatically
 	}
 
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // gets table name
+	String tblName = buff;
 	Table& tbl = TableUtils::findTable(tables, tblName);
 
-	SSUtils::clearWhiteSpaces(ssQuery);
-	ssQuery.getline(buff, 1024, ' '); // gets if there is where
+	Vector<Column> columns = tbl.getColumns();
+	int asteriksIdx = -1;
+	for (size_t i = 0; i < columnNames.getSize(); i++)
+	{
+		if (columnNames[i] == "*")
+		{
+			for (size_t j = 0; j < columns.getSize(); j++)
+			{
+				if (columnNames.getSize() == 0)
+					columnNames.pushBack(columns[j].name);
+				else
+					columnNames.pushAt(columns[j].name, i);
+				i++;
+			}
+			asteriksIdx = i;
+		}
+	}
 
-	if ((String)buff == "where")
+	SSUtils::clearWhiteSpaces(ssQuery);
+	ssQuery.getline(buff, 1024, ' '); // gets if there is join or where;
+	
+	if((String)buff == "join")
+	{
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // gets table name
+		String joinTblName = buff;
+		Table& joinTbl = TableUtils::findTable(tables, joinTblName);
+		Vector<Column> joinTblColumns = joinTbl.getColumns();
+
+		if (asteriksIdx != -1)
+		{
+			for (size_t i = 0; i < joinTblColumns.getSize(); i++)
+			{
+				columnNames.pushAt(joinTblColumns[i].name, asteriksIdx);
+				asteriksIdx++;
+				columnNames.popAt(asteriksIdx);
+			}
+		}
+
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // skips "on"
+
+		Vector<String> joinColumnNames;
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, '='); // gets join expression
+		joinColumnNames.pushBack(buff);
+		SSUtils::clearWhiteSpaces(ssQuery);
+		ssQuery.getline(buff, 1024, ' '); // gets join expression
+		joinColumnNames.pushBack(buff);
+
+		return new SelectCommand(tbl, columnNames, joinColumnNames, &joinTbl);
+	}
+	else if ((String)buff == "where")
 	{
 		SSUtils::clearWhiteSpaces(ssQuery);
 		ssQuery.getline(buff, 1024, ';'); // gets where expression
 		String whereExpression(buff);
+		
+		if (asteriksIdx != -1)
+		{
+			columnNames.popAt(asteriksIdx);
+		}
+
 		return new SelectCommand(tbl, columnNames, whereExpression);
 	}
 	else
 	{
+		if (asteriksIdx != -1)
+		{
+			columnNames.popAt(asteriksIdx);
+		}
+
 		return new SelectCommand(tbl, columnNames);
 	}
 }
@@ -366,7 +407,7 @@ SQLCommand* SQLCommandFactory::createCommand(Vector<Table>& tables, const String
 		return handleAlterTableCommand(tables, ssQuery);
 		break;
 	case SQLCommandType::ShowTables:
-		return handleShowTablesCommand(tables, ssQuery, databaseName);
+		return handleShowTablesCommand(tables, databaseName);
 		break;
 	case SQLCommandType::Insert:
 		return handleInsertCommand(tables, ssQuery);

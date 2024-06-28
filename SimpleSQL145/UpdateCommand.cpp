@@ -7,7 +7,7 @@ UpdateCommand::UpdateCommand(Table& table, const String& columnName, const Strin
 {
 }
 
-UpdateCommand::UpdateCommand(Table& table, const String& columnName, const String& value, const String* whereExpression)
+UpdateCommand::UpdateCommand(Table& table, const String& columnName, const String& value, const String& whereExpression)
 	: TableCommand(table), columnName(columnName), value(value), whereExpression(whereExpression)
 {
 }
@@ -17,7 +17,7 @@ SQLResponse UpdateCommand::execute()
 	Vector<Row> tableRows = table.getRows();
 
 	int affectedRows = 0;
-	if (!whereExpression)
+	if (whereExpression == "")
 	{
 		for (size_t i = 0; i < tableRows.getSize(); i++)
 		{
@@ -27,7 +27,7 @@ SQLResponse UpdateCommand::execute()
 	}
 	else
 	{
-		WhereExpressionHandler handler(*whereExpression);
+		WhereExpressionHandler handler(whereExpression);
 		for (size_t i = 0; i < tableRows.getSize(); i++)
 		{
 			if (handler.evaluate(table, i))

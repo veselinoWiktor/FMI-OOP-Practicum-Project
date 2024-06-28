@@ -17,6 +17,8 @@ Table& TableUtils::findTable(Vector<Table>& tables, const String& tblName)
 			return tables[i];
 		}
 	}
+
+	throw std::logic_error(("Invalid table name \'" + tblName + "\'.").c_str());
 }
 
 const Table& TableUtils::findTable(const Vector<Table>& tables, const String& tblName)
@@ -28,6 +30,8 @@ const Table& TableUtils::findTable(const Vector<Table>& tables, const String& tb
 			return tables[i];
 		}
 	}
+
+	throw std::logic_error(("Invalid table name \'" + tblName + "\'.").c_str());
 }
 
 int DataUtils::intParse(const String& str)

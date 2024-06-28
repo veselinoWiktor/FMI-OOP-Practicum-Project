@@ -25,9 +25,9 @@ public:
 
 	size_t getColumnsCount() const;
 	const Vector<Column>& getColumns() const;
-	const Column& getColumn(const String& colName);
-	const Column& getColumn(size_t idx);
-	size_t getColumnIndex(const String& colName) const;
+	const Column& getColumn(const String& colName) const;
+	const Column& getColumn(size_t idx) const;
+	int getColumnIndex(const String& colName) const;
 
 	size_t getRowsCount() const;
 	const Vector<Row>& getRows() const;

@@ -13,7 +13,8 @@ private:
 	size_t capacity;
 	void resize(size_t newCapacity);
 
-	void assertIndex(size_t index) const;
+	void assertPushIndex(size_t index) const;
+	void assertPopIndex(size_t index) const;
 	void upsizeIfNeeded();
 	void downsizeIfNeeded();
 public:
@@ -95,13 +96,6 @@ Vector<T>::~Vector() {
 }
 
 template<typename T>
-void Vector<T>::assertIndex(size_t index) const {
-	if (index >= size) {
-		throw std::exception("Out of range");
-	}
-}
-
-template<typename T>
 void Vector<T>::upsizeIfNeeded() {
 	if (size == capacity) {
 		resize(capacity * RESIZE_COEF);
@@ -133,6 +127,22 @@ void Vector<T>::resize(size_t newCapacity) {
 }
 
 template<typename T>
+void Vector<T>::assertPushIndex(size_t index) const
+{
+	if (index > size) {
+		throw std::exception("Out of range");
+	}
+}
+
+template<typename T>
+void Vector<T>::assertPopIndex(size_t index) const
+{
+	if (index >= size) {
+		throw std::exception("Out of range");
+	}
+}
+
+template<typename T>
 size_t Vector<T>::getSize() const {
 	return size;
 }
@@ -156,7 +166,7 @@ void Vector<T>::pushBack(T&& element) {
 
 template<typename T>
 void Vector<T>::pushAt(const T& element, size_t index) {
-	assertIndex(index);
+	assertPushIndex(index);
 	upsizeIfNeeded();
 
 	for (size_t i = size; i > index; i--) {
@@ -169,7 +179,7 @@ void Vector<T>::pushAt(const T& element, size_t index) {
 
 template<typename T>
 void Vector<T>::pushAt(T&& element, size_t index) {
-	assertIndex(index);
+	assertPushIndex(index);
 	upsizeIfNeeded();
 
 	for (size_t i = size; i > index; i--) {
@@ -190,7 +200,7 @@ T Vector<T>::popBack() {
 
 template<typename T>
 T Vector<T>::popAt(size_t index) {
-	assertIndex(index);
+	assertPopIndex(index);
 	downsizeIfNeeded();
 
 	T temp = data[index];
@@ -233,14 +243,14 @@ void Vector<T>::shrinkToFit() {
 
 template<typename T>
 T& Vector<T>::operator[](size_t index) {
-	assertIndex(index);
+	assertPopIndex(index);
 
 	return data[index];
 }
 
 template<typename T>
 const T& Vector<T>::operator[](size_t index) const {
-	assertIndex(index);
+	assertPopIndex(index);
 
 	return data[index];
 }

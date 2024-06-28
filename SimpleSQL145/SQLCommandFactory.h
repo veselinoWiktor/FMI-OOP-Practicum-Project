@@ -21,7 +21,7 @@ class SQLCommandFactory
 
 	SQLCommand* handleCreateTableCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleDropTableCommand(Vector<Table>& tables, std::stringstream& ssQuery);
-	SQLCommand* handleShowTablesCommand(Vector<Table>& tables, std::stringstream& ssQuery, const String& databaseName);
+	SQLCommand* handleShowTablesCommand(Vector<Table>& tables, const String& databaseName);
 	SQLCommand* handleAlterTableCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleInsertCommand(Vector<Table>& tables, std::stringstream& ssQuery);
 	SQLCommand* handleUpdateCommand(Vector<Table>& tables, std::stringstream& ssQuery);

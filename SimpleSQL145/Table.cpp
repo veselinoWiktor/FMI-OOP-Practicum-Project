@@ -59,7 +59,7 @@ const Vector<Column>& Table::getColumns() const
 	return columns;
 }
 
-const Column& Table::getColumn(const String& colName)
+const Column& Table::getColumn(const String& colName) const
 {
 	for (size_t i = 0; i < columns.getSize(); i++)
 	{
@@ -70,12 +70,12 @@ const Column& Table::getColumn(const String& colName)
 	}
 }
 
-const Column& Table::getColumn(size_t idx)
+const Column& Table::getColumn(size_t idx) const
 {
 	return columns[idx];
 }
 
-size_t Table::getColumnIndex(const String& colName) const
+int Table::getColumnIndex(const String& colName) const
 {
 	for (size_t i = 0; i < columns.getSize(); i++)
 	{
@@ -84,6 +84,8 @@ size_t Table::getColumnIndex(const String& colName) const
 			return i;
 		}
 	}
+
+	return -1;
 }
 
 size_t Table::getRowsCount() const
